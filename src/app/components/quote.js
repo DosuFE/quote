@@ -1,12 +1,20 @@
 'use client'
 import { useEffect, useState } from "react";
-import QuoteData from "./data";
+import QuoteData from "./dataCard";
 import ButtonQuote from "./getQuote";
 import ThemeToggle from "./theme-toggle";
+import Search from "./search";
 
 export default function Quote() {
     const [quotes, setQuotes] = useState([]);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('')
+
+    const filteredQuotes = quotes.filter(
+        quote => 
+            quote.quote.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            quote.author.toLowerCase().includes(searchTerm.toLowerCase())
+    )
 
     const fetchQuotes = async () => {
         try {
@@ -37,13 +45,18 @@ export default function Quote() {
                     <ButtonQuote onClick={fetchQuotes} />
                 </div>
             </div>
+            <Search 
+                searchTerm={searchTerm} 
+                setSearchTerm={setSearchTerm}
+            />
             {error ? (
                 <p className="text-red-600 dark:text-red-400 mx-4">Error: {error}</p>
             ) : (
                 <main className="grid grid-cols-1 
                 md:grid-cols-3 lg:grid-cols-4 
                 sm:grid-cols-2 gap-4 mx-4 sm:mx-6 md:mx-8 lg:mx-10">
-                    {quotes.map((quote, index) => (
+                    
+                    {filteredQuotes.map((quote, index) => (
                        <QuoteData key={index} datas={quote}/>
                     ))}
                 </main>
